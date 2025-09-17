@@ -1,0 +1,96 @@
+{
+  "name": "@digieggs/rn-country-code-picker",
+  "version": "1.4.4",
+  "main": "lib/module/index.js",
+  "module": "lib/module/index.js",
+  "react-native": "src/index.ts",
+  "types": "lib/typescript/index.d.ts",
+  "description": "A searchable dropdown component to select a country code for your phone number input.",
+  "license": "MIT",
+  "files": [
+    "lib/",
+    "src/"
+  ],
+  "keywords": [
+    "react-native",
+    "country",
+    "country-code",
+    "dialing code",
+    "picker",
+    "mobile",
+    "ios",
+    "android"
+  ],
+  "bugs": {
+    "url": "https://github.com/DIGIEGGS/rn-country-code-picker/issues"
+  },
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "prepare": "bob build"
+  },
+  "dependencies": {
+    "@testing-library/react-native": "^8.0.0",
+    "react": "^17.0.2",
+    "react-native": "0.68.1",
+    "react-native-localize": "^2.2.1",
+    "react-native-svg": "^12.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@testing-library/jest-native": "^3.4.3",
+    "@testing-library/react-native": "^7.1.0",
+    "@types/jest": "^26.0.23",
+    "@types/react-native": "^0.65.0",
+    "@types/react-test-renderer": "^17.0.1",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.14.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "react-native-builder-bob": "^0.18.2",
+    "react-test-renderer": "17.0.2",
+    "typescript": "^3.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DIGIEGGS/rn-country-code-picker"
+  },
+  "resolutions": {
+    "@types/react": "^17"
+  },
+  "jest": {
+    "preset": "react-native",
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/lib/"
+    ]
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ]
+}
