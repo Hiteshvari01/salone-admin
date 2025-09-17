@@ -38,9 +38,10 @@
         <!-- Profile Dropdown -->
         <div class="relative">
             <button id="profileDropdown" class="flex items-center space-x-2 focus:outline-none hover:bg-gray-100 px-2 py-1 rounded transition">
-                <img src="<%= admin && admin.profileImage ? admin.profileImage.url : 'https://via.placeholder.com/40' %>" 
-                     alt="Profile" class="w-10 h-10 rounded-full border-2 border-gray-200" />
-                <span class="hidden md:block font-medium text-gray-700"><%= admin ? admin.name : 'Admin' %></span>
+                <img src="<%= (typeof admin !== 'undefined' && admin.profileImage) ? admin.profileImage.url : 'https://via.placeholder.com/40' %>" 
+     alt="Profile" class="w-10 h-10 rounded-full border-2 border-gray-200" />
+<span class="hidden md:block font-medium text-gray-700"><%= (typeof admin !== 'undefined' && admin.name) ? admin.name : 'Admin' %></span>
+
                 <i class="fas fa-caret-down ml-1 text-gray-500"></i>
             </button>
             <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg hidden">

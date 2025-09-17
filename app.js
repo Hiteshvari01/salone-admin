@@ -41,7 +41,6 @@ app.use(
 
 // Inject admin into res.locals
 app.use(
-  '/admin',
   wrapAsync(async (req, res, next) => {
     let admin = null;
     if (req.session.adminId) {
