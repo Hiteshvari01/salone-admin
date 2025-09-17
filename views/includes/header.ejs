@@ -50,3 +50,35 @@
         </div>
     </div>
 </header>
+<script>
+    // Sidebar toggle functionality
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    toggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    });
+
+    // Overlay click to close sidebar
+    overlay.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+
+    // Profile dropdown toggle
+    const profileDropdown = document.getElementById('profileDropdown');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    profileDropdown.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Click outside to close dropdown
+    window.addEventListener('click', function(e) {
+        if (!profileDropdown.contains(e.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+</script>
