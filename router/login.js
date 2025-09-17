@@ -1,13 +1,15 @@
-// router/login.js
 const express = require('express');
 const router = express.Router();
 const Admin = require('../models/admin');
 const wrapAsync = require('../utils/wrapAsync');
 const bcrypt = require('bcrypt');
+const { isNotLoggedIn } = require('../middleware');
 
 // --- Login Page ---
-router.get('/login', (req, res) => {
-  res.render('admin/login/login', { error: null ,layout: false});
+router.get('/login', isNotLoggedIn, (req, res) => {
+  // Prevent redirect loop if already logged in
+  if (req.session.adminId) return res.redirect('/admin/dashboard');
+  res.render('admin/login/login', { error: null, layout: false });
 });
 
 // --- Login POST ---
@@ -17,19 +19,28 @@ router.post(
     const email = req.body.email?.toLowerCase().trim();
     const password = req.body.password?.trim();
 
+    if (!email || !password) {
+      return res.render('admin/login/login', { error: 'Please fill all fields', layout: false });
+    }
+
     const admin = await Admin.findOne({ contactEmail: email });
-    if (!admin) return res.render('admin/login/login', { error: 'Invalid email or password' });
+    if (!admin || !admin.password) {
+      return res.render('admin/login/login', { error: 'Invalid email or password', layout: false });
+    }
 
     const valid = await bcrypt.compare(password, admin.password);
-    if (!valid) return res.render('admin/login/login', { error: 'Invalid email or password' });
+    if (!valid) {
+      return res.render('admin/login/login', { error: 'Invalid email or password', layout: false });
+    }
 
     req.session.adminId = admin._id;
-    res.redirect('/admin/dashboard');
+    return res.redirect('/admin/dashboard');
   })
 );
+
 // --- Forgot Password Page ---
-router.get('/forgot-password', (req, res) => {
-  res.render('admin/login/forgetPass', { message: null, error: null });
+router.get('/forgot-password', isNotLoggedIn, (req, res) => {
+  res.render('admin/login/forgetPass', { message: null, error: null, layout: false });
 });
 
 // --- Handle Forgot Password POST ---
@@ -40,11 +51,10 @@ router.post(
     const admin = await Admin.findOne({ contactEmail: email });
 
     if (!admin) {
-      return res.render('admin/login/forgetPass', { message: null, error: 'Email not found' });
+      return res.render('admin/login/forgetPass', { message: null, error: 'Email not found', layout: false });
     }
 
-    // Email exists → render reset page
-    res.render('admin/login/reset', { adminId: admin._id, error: null ,layout: false});
+    res.render('admin/login/reset', { adminId: admin._id, error: null, layout: false });
   })
 );
 
@@ -55,18 +65,30 @@ router.post(
     const { adminId, newPassword, confirmPassword } = req.body;
 
     if (!newPassword || !confirmPassword) {
-      return res.render('admin/login/reset', { adminId, error: 'Please fill all fields' });
+      return res.render('admin/login/reset', { adminId, error: 'Please fill all fields', layout: false });
     }
 
     if (newPassword !== confirmPassword) {
-      return res.render('admin/login/reset', { adminId, error: 'Passwords do not match' });
+      return res.render('admin/login/reset', { adminId, error: 'Passwords do not match', layout: false });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     await Admin.findByIdAndUpdate(adminId, { password: hashedPassword });
 
-    res.redirect('/admin/login');
+    return res.redirect('/admin/login');
   })
 );
+
+// --- Logout ---
+router.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Session destruction error:', err);
+      return res.redirect('/admin/dashboard');
+    }
+    res.clearCookie('connect.sid', { path: '/' });
+    return res.redirect('/admin/login');
+  });
+});
 
 module.exports = router;

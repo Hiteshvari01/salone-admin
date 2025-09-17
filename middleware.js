@@ -102,10 +102,12 @@ module.exports.validateStaff = (req, res, next) => {
 
 
 // ---------- Authentication & Authorization ----------
-
 module.exports.isAdminLoggedIn = (req, res, next) => {
-  if (!req.session.adminId) {
-    return res.redirect('/login');
-  }
+  if (!req.session.adminId) return res.redirect('/admin/login');
+  next();
+};
+
+module.exports.isNotLoggedIn = (req, res, next) => {
+  if (req.session.adminId) return res.redirect('/admin/dashboard');
   next();
 };
