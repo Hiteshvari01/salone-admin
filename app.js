@@ -5,7 +5,7 @@ const session = require('express-session');
 const ejsLayouts = require('express-ejs-layouts');
 const path = require('path');
 const methodOverride = require('method-override');
-
+const flash = require('connect-flash');
 const app = express();
 
 // Models
@@ -20,12 +20,13 @@ const dashboardRouter = require('./router/dashboard');
 const bookingRouter = require('./router/booking');
 const customersRouter = require('./router/customers');
 const galleryRouter = require('./router/gallery');
-const reviewsRouter = require('./router/reviews');
+
 const serviceRouter = require('./router/service');
 const staffRouter = require('./router/staff');
 const settingRouter = require('./router/settings');
 
 // --- Middleware ---
+
 app.use(methodOverride('_method'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -39,7 +40,14 @@ app.use(
     cookie: { secure: false, httpOnly: true }, // secure: false for localhost
   })
 );
+app.use(flash());
 
+// ✅ Make flash messages available in all views
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  next();
+});
 // --- Inject admin into locals ---
 app.use(async (req, res, next) => {
   if (req.session.adminId) {
@@ -54,6 +62,7 @@ app.use(async (req, res, next) => {
   }
   next();
 });
+
 
 // --- EJS Setup ---
 app.use(ejsLayouts);
@@ -83,7 +92,7 @@ app.use('/admin/dashboard', isAdminLoggedIn, dashboardRouter);
 app.use('/admin/booking', isAdminLoggedIn, bookingRouter);
 app.use('/admin/customers', isAdminLoggedIn, customersRouter);
 app.use('/admin/gallery', isAdminLoggedIn, galleryRouter);
-app.use('/admin/reviews', isAdminLoggedIn, reviewsRouter);
+
 app.use('/admin/services', isAdminLoggedIn, serviceRouter);
 app.use('/admin/staff', isAdminLoggedIn, staffRouter);
 app.use('/admin/settings', isAdminLoggedIn, settingRouter);

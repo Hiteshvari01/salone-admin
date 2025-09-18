@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const GalleryImage = require("../models/gallery"); // GalleryImage model
-const { validateGalleryImage } = require("../middleware"); // Joi validation
-const wrapAsync = require("../utils/wrapAsync"); // Async error handler
+const GalleryImage = require("../models/gallery");
+const { validateGalleryImage } = require("../middleware");
+const wrapAsync = require("../utils/wrapAsync");
 const methodOverride = require("method-override");
 const multer = require("multer");
-const { storage } = require("../config.js"); // multer-storage-cloudinary
+const { storage } = require("../config.js");
 const upload = multer({ storage });
 
-// Use method-override for PUT/DELETE
 router.use(methodOverride("_method"));
 
 // -------- GET ALL IMAGES --------
@@ -33,10 +32,11 @@ router.post("/", upload.single("image"), validateGalleryImage, wrapAsync(async (
 
     const newImage = new GalleryImage(body);
     newImage.imageUrl = {
-        url: file.path,       // Cloudinary URL
+        url: file.path,
         filename: file.filename
     };
     await newImage.save();
+    req.flash("success", "Image uploaded successfully!");
     res.redirect("/admin/gallery");
 }));
 
@@ -58,7 +58,6 @@ router.put("/:id", upload.single("image"), validateGalleryImage, wrapAsync(async
 
     const updateData = { ...body };
 
-    // If a new image is uploaded, update imageUrl
     if (file) {
         updateData.imageUrl = {
             url: file.path,
@@ -67,6 +66,7 @@ router.put("/:id", upload.single("image"), validateGalleryImage, wrapAsync(async
     }
 
     await GalleryImage.findByIdAndUpdate(id, updateData);
+    req.flash("success", "Image updated successfully!");
     res.redirect("/admin/gallery");
 }));
 
@@ -75,8 +75,11 @@ router.delete("/:id", wrapAsync(async (req, res) => {
     const { id } = req.params;
     const image = await GalleryImage.findById(id);
     if (image) {
-        // Optionally delete from Cloudinary here using filename
+        // Optional: delete from Cloudinary here using filename
         await GalleryImage.findByIdAndDelete(id);
+        req.flash("success", "Image deleted successfully!");
+    } else {
+        req.flash("error", "Image not found!");
     }
     res.redirect("/admin/gallery");
 }));

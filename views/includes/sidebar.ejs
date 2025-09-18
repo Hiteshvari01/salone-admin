@@ -10,27 +10,27 @@
 
         <!-- Navigation -->
         <nav class="mt-4 flex flex-col gap-1 px-2 items-start">
-            <a href="/admin/dashboard" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/dashboard" data-page="dashboard" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-tachometer-alt w-6 text-left"></i>
                 <span class="ml-3">Dashboard</span>
             </a>
-            <a href="/admin/booking" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/booking" data-page="booking" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-calendar-check w-6 text-left"></i>
                 <span class="ml-3">Appointments</span>
             </a>
-            <a href="/admin/customers" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/customers" data-page="customers" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-users w-6 text-left"></i>
                 <span class="ml-3">Customers</span>
             </a>
-            <a href="/admin/services" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/services" data-page="services" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-spa w-6 text-left"></i>
                 <span class="ml-3">Services</span>
             </a>
-            <a href="/admin/staff" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/staff" data-page="staff" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-user-tie w-6 text-left"></i>
                 <span class="ml-3">Staff</span>
             </a>
-            <a href="/admin/gallery" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+            <a href="/admin/gallery" data-page="gallery" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
                 <i class="fas fa-credit-card w-6 text-left"></i>
                 <span class="ml-3">Gallery</span>
             </a>
@@ -39,7 +39,7 @@
 
     <!-- Bottom Section -->
     <div class="mb-2 flex flex-col gap-1 px-2 items-start">
-        <a href="/admin/settings" class="flex items-center px-3 py-2 rounded hover:bg-[#c69858] hover:text-white transition-colors w-full text-[#5a4630]">
+        <a href="/admin/settings" data-page="settings" class="sidebar-link flex items-center px-3 py-2 rounded text-[#5a4630] hover:bg-[#c69858] hover:text-white transition-colors w-full">
             <i class="fas fa-cog w-6 text-left"></i>
             <span class="ml-3">Settings</span>
         </a>
@@ -48,3 +48,28 @@
 
 <!-- Overlay for Mobile -->
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 z-30 hidden md:hidden"></div>
+
+<!-- JS for Active Sidebar based on URL -->
+<script>
+    const sidebarLinks = document.querySelectorAll('#sidebar .sidebar-link');
+    const currentPath = window.location.pathname.split('/').pop(); // gets last part of URL
+
+    sidebarLinks.forEach(link => {
+        const page = link.dataset.page;
+
+        // Check if the current path matches the link
+        if(currentPath === page) {
+            link.classList.add('active', 'bg-[#c69858]', 'text-white');
+        } else {
+            link.classList.remove('active', 'bg-[#c69858]', 'text-white');
+        }
+    });
+</script>
+
+<style>
+    /* Optional: hover style for inactive links */
+    .sidebar-link:not(.active):hover {
+        background-color: #c69858;
+        color: white;
+    }
+</style>

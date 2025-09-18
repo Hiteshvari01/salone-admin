@@ -20,23 +20,28 @@ router.post(
     const password = req.body.password?.trim();
 
     if (!email || !password) {
-      return res.render('admin/login/login', { error: 'Please fill all fields', layout: false });
+      req.flash('error', 'Please fill all fields');
+      return res.redirect('/admin/login');
     }
 
     const admin = await Admin.findOne({ contactEmail: email });
     if (!admin || !admin.password) {
-      return res.render('admin/login/login', { error: 'Invalid email or password', layout: false });
+      req.flash('error', 'Invalid email or password');
+      return res.redirect('/admin/login');
     }
 
     const valid = await bcrypt.compare(password, admin.password);
     if (!valid) {
-      return res.render('admin/login/login', { error: 'Invalid email or password', layout: false });
+      req.flash('error', 'Invalid email or password');
+      return res.redirect('/admin/login');
     }
 
     req.session.adminId = admin._id;
+    req.flash('success', 'Logged in successfully!');
     return res.redirect('/admin/dashboard');
   })
 );
+
 
 // --- Forgot Password Page ---
 router.get('/forgot-password', isNotLoggedIn, (req, res) => {

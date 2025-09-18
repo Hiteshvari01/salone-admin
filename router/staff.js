@@ -34,35 +34,40 @@ router.post('/add', upload.single('image'), wrapAsync(async (req, res) => {
             filename: req.file.filename
         };
     } else {
-        throw new Error("Image is required"); // ensure required
+        req.flash("error", "Image is required");
+        return res.redirect('/admin/staff/add');
     }
 
     await Staff.create(staffData);
+    req.flash("success", "Staff member added successfully!");
     res.redirect('/admin/staff');
 }));
-
 
 // -------- Edit Staff Form --------
 router.get('/edit/:id', wrapAsync(async (req, res) => {
     const staff = await Staff.findById(req.params.id);
-    if (!staff) throw new Error('Staff not found');
+    if (!staff) {
+        req.flash("error", "Staff not found");
+        return res.redirect('/admin/staff');
+    }
     res.render('admin/staff/edit', { staff });
 }));
 
 // -------- Update Staff --------
-// -------- UPDATE STAFF --------
 router.put("/edit/:id", upload.single("image"), wrapAsync(async (req, res) => {
     const { id } = req.params;
     const { name, specialization } = req.body;
     const staff = await Staff.findById(id);
 
-    // Update text fields
+    if (!staff) {
+        req.flash("error", "Staff not found");
+        return res.redirect('/admin/staff');
+    }
+
     staff.name = name;
     staff.specialization = specialization;
 
-    // Agar user ne nayi file choose ki hai, to replace karo
     if (req.file) {
-        // Optional: old image delete from cloudinary
         if (staff.image?.filename) {
             await cloudinary.uploader.destroy(staff.image.filename);
         }
@@ -71,18 +76,29 @@ router.put("/edit/:id", upload.single("image"), wrapAsync(async (req, res) => {
             filename: req.file.filename
         };
     }
-    // Agar req.file nahi hai, to existing image wahi rahegi
+
     await staff.save();
+    req.flash("success", "Staff member updated successfully!");
     res.redirect("/admin/staff");
 }));
 
 // -------- Delete Staff --------
-router.delete('/delete/:id', wrapAsync(async (req, res) => {
-    const staff = await Staff.findById(req.params.id);
+// -------- Delete Staff --------
+router.post('/delete/:id', wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const staff = await Staff.findById(id);
+    if (!staff) {
+        req.flash("error", "Staff not found");
+        return res.redirect('/admin/staff');
+    }
+
+    // Delete image from Cloudinary if exists
     if (staff.image?.filename) {
         await cloudinary.uploader.destroy(staff.image.filename);
     }
-    await Staff.findByIdAndDelete(req.params.id);
+
+    await Staff.findByIdAndDelete(id);
+    req.flash("success", "Staff member deleted successfully!");
     res.redirect('/admin/staff');
 }));
 

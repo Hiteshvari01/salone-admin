@@ -63,11 +63,15 @@ module.exports.imageSchema = Joi.object({
 module.exports.serviceSchema = Joi.object({
   name: Joi.string().trim().required(),
   description: Joi.string().trim().required(),
-  imageUrl: Joi.string().uri().optional(),
   price: Joi.number().min(0).required(),
   duration: Joi.string().trim().optional(),
+  image: Joi.object({
+    url: Joi.string().uri().required(),
+    filename: Joi.string().required()
+  }).required(),
   bookings: Joi.array().items(Joi.string()).optional()
 });
+
 
 // Review Schema
 module.exports.reviewSchema = Joi.object({
